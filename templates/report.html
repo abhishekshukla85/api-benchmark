@@ -414,15 +414,14 @@
 
       $(function(){
         var counter = 0;
-        var buckets = [[0.025, 0], [0.05, 0], [0.1, 0], [0.25, 0], [0.333, 0], [0.5, 0], [0.750, 0], [1, 0], [5, 0], [10, 0], [50, 0], [100, 0], [300, 0], [1000, 0]];
-
         for(serviceName in data.benchmark){
           for(routeName in data.benchmark[serviceName]){
             var samples = data.benchmark[serviceName][routeName]['stats']['sample'];
+            var buckets = [[0.025, 0], [0.05, 0], [0.1, 0], [0.25, 0], [0.333, 0], [0.5, 0], [0.750, 0], [1.5, 0], [3, 0], [6, 0], [12, 0], [50, 0], [100, 0], [300, 0], [1000, 0]];
             for(var i = 0; i<samples.length; i++) {
               for (var j =0; j<buckets.length; j++) {
                 if(buckets[j][0]>= samples[i]){
-                  buckets[j][1]+=1/samples.length;
+                  buckets[j][1]+=100/samples.length;
                   break;
                 }
               };
@@ -430,9 +429,8 @@
 
             var distribution = [];
             for(i =0; i<buckets.length; i++) {
-              var x = buckets[i];
-              if(x[1]){
-                distribution.push([x[0], x[1]/samples.length]);
+              if(buckets[i][1]){
+                distribution.push(buckets[i]);
               }
             }
             var lines = [distribution],
@@ -473,13 +471,15 @@
                 xaxis: {
                   label: 'Response time (seconds)',
                   tickOptions: {
-                    formatString:'%.6f'
+                    formatString:'%.3f'
                   }
                 },
                 yaxis: {
                   label: 'Percent of responses',
                   tickOptions: {
-                    formatString:'%.3f'
+                    formatString: function(val){
+                      console.log(val);
+                      return '%.1f%';}()
                   }
                 }
               },
